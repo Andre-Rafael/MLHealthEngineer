@@ -1,0 +1,5 @@
+stages:
+ data_load: 
+    cmd: python -c "import kagglehub; kagglehub.dataset_download(handle='jajidhasan/mental-health', output_dir='data/raw')"
+    outs:
+      - data/raw/mental_health.csv

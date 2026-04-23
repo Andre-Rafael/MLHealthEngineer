@@ -1,0 +1,11 @@
+schema: '2.0'
+stages:
+  data_load:
+    cmd: python -c "import kagglehub; 
+      kagglehub.dataset_download(handle='jajidhasan/mental-health', 
+      output_dir='data/raw')"
+    outs:
+    - path: data/raw/mental_health.csv
+      hash: md5
+      md5: e7626390a66e0548963b5e3c10ce137d
+      size: 125681
