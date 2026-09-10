@@ -1,15 +1,13 @@
 stages:
- data_load: 
+  data_load: 
     cmd: python -c "import kagglehub; kagglehub.dataset_download(handle='jajidhasan/mental-health', output_dir='data/raw')"
-    deps:
-      - kagglehub
     outs:
       - data/raw/mental_health.csv
 
   train:
-    cmd: python src/features/features_engineering.py
+    cmd: python src/features/feature_engineering.py
     deps:
-      - src/features/features_engineering.py
+      - src/features/feature_engineering.py
       - data/raw/mental_health.csv
     outs:
       - data/processed/features.csv
