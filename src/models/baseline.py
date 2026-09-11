@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 from train import train_and_log
 
 info("Iniciando treinamento do modelo baseline")
-data = pd.read_csv('C:\\Users\\Andre Rafael\\Downloads\\mental_health_project\\data\\processed\\features.csv')
+data = pd.read_csv('data\\processed\\features.csv')
 
 
 result = train_and_log(

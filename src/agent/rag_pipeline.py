@@ -44,6 +44,7 @@ def process_documents_for_embedding(documents: List[Document]) -> Chroma:
     if not Path("chroma_db").exists():
         info("No existing Chroma vector store found, creating a new one from chunks")
         chroma_vector_store = Chroma.from_documents(
+            chunks,
             persist_directory="chroma_db",
             embedding=embeddings,
         )
@@ -51,7 +52,7 @@ def process_documents_for_embedding(documents: List[Document]) -> Chroma:
         chroma_vector_store = Chroma.from_documents(
             chunks,
             embedding=embeddings,
-            persist_directory="chroma_db",
+            persist_directory="./chroma_db",
         )
     info("Chroma vector store ready")
     return chroma_vector_store
