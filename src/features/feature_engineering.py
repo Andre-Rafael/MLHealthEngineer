@@ -1,4 +1,5 @@
 from logging import info
+from pathlib import Path
 
 import pandas as pd
 
@@ -29,14 +30,17 @@ def set_scaling(df):
 if __name__ == "__main__":
 
     df = pd.read_csv(
-        "C:\\Users\\Andre Rafael\\Downloads\\mental_health_project\\data\\raw\\mental_health.csv"
+        "data\\raw\\mental_health.csv"
     )
 
     info("Cleaning and feature engineering data")
     for step_func in [separe_columns, convert_categorical_to_numeric, set_scaling]:
         df = step_func(df)
 
+    if not Path('data\\processed').exists():
+        Path('data\\processed').mkdir()
+
     df.to_csv(
-        'C:\\Users\\Andre Rafael\\Downloads\\mental_health_project\\data\\processed\\features.csv',
+        'data\\processed\\features.csv',
         index=False
     )

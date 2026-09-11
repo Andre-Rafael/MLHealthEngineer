@@ -1,35 +1,63 @@
-# src/agent/react_agent.py
-"""Agente ReAct com tools customizadas para o domínio do Datathon.
+from logging import warning
+from typing import List
+from dotenv import load_dotenv
 
-Referência: Yao et al. (2023) — ReAct: Synergizing Reasoning and Acting
-            in Language Models. https://arxiv.org/abs/2210.03629
-"""
-import logging
+from langchain_classic.agents import AgentExecutor, create_react_agent
+from langchain_core.prompts import PromptTemplate
+from langchain_core.tools import Tool
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain.prompts import PromptTemplate
-from langchain_community.chat_models import ChatOpenAI
-from langchain.tools import Tool
+from tools import load_pdf_data, search_info_in_gov_br, search_news_in_g1
 
-logger = logging.getLogger(__name__)
+load_dotenv()
+MODEL_NAME = "gemini-2.5-flash"
 
-REACT_PROMPT = PromptTemplate.from_template("""Você é um assistente especializado.
-Use as ferramentas disponíveis para responder perguntas.
 
-Ferramentas disponíveis:
-{tools}
+def generate_react_prompt() -> PromptTemplate:
+    REACT_PROMPT = PromptTemplate.from_template("""Você é um assistente especializado.
+        Use as ferramentas disponíveis para responder perguntas.
+        Ferramentas disponíveis:
+        {tools}
+        Use o formato:
+        Thought: pensar sobre o que fazer
+        Action: ação a tomar, deve ser uma das [{tool_names}]
+        Action Input: input para a ferramenta
+        Observation: resultado da ferramenta
+        ... (repita Thought/Action/Observation quantas vezes necessário)
+        Thought: Agora sei a resposta final
+        Final Answer: resposta para o usuário
+        Pergunta: {input}
+        {agent_scratchpad}""")
+    
+    return REACT_PROMPT
 
-Use o formato:
-Thought: pensar sobre o que fazer
-Action: nome_da_ferramenta
-Action Input: input para a ferramenta
-Observation: resultado da ferramenta
-... (repita Thought/Action/Observation quantas vezes necessário)
-Thought: Agora sei a resposta final
-Final Answer: resposta para o usuário
 
-Pergunta: {input}
-{agent_scratchpad}""")
+
+def generate_tools() -> List[Tool]:
+    return [
+        Tool(
+            name="load_pdf_data",
+            description="Carrega o conteúdo de um documento PDF sobre saúde mental para o agente.",
+            func=load_pdf_data,
+            kwargs={"pdf_path": "data/docs/CartilhaSaudeMentalUFLA.pdf"},
+        ),
+        Tool(
+            name="search_news_in_g1",
+            description="""
+                Procura por notícias recentes sobre saúde mental no site G1 para o agente.
+                A consulta deve ser feita em português e use palavras-chave relevantes para obter os melhores resultados.
+            """,
+            func=search_news_in_g1,
+        ),
+        Tool(
+            name="search_info_in_gov_br",
+            description="""
+                Procura por informações sobre saúde mental no site do governo brasileiro para o agente.
+                A consulta deve ser feita em português e use palavras-chave relevantes para obter os melhores resultados.
+            """,
+            func=search_info_in_gov_br,
+        ),
+    ]
 
 
 def create_datathon_agent(
@@ -47,11 +75,12 @@ def create_datathon_agent(
     Returns:
         AgentExecutor configurado.
     """
+    react_prompt = generate_react_prompt()
     if len(tools) < 3:
-        logger.warning("Datathon exige ≥ 3 tools. Fornecidas: %d", len(tools))
+        warning("Datathon exige ≥ 3 tools. Fornecidas: %d", len(tools))
 
-    llm = ChatOpenAI(model=model_name, temperature=temperature)
-    agent = create_react_agent(llm=llm, tools=tools, prompt=REACT_PROMPT)
+    llm = ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+    agent = create_react_agent(llm=llm, tools=tools, prompt=react_prompt)
 
     return AgentExecutor(
         agent=agent,
@@ -60,3 +89,12 @@ def create_datathon_agent(
         max_iterations=10,
         handle_parsing_errors=True,
     )
+
+
+if __name__ == "__main__":
+    tools = generate_tools()
+    agent_executor = create_datathon_agent(tools, model_name=MODEL_NAME, temperature=0.0)
+    response = agent_executor.invoke(
+        {"input": "Resume a nova legislação sobre saude mental no ambiente de trabalho no Brasil."}
+    )
+    print(response)

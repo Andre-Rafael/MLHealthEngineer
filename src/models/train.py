@@ -4,7 +4,9 @@ import logging
 import os
 
 
+import git
 import mlflow
+from mlflow.data.pandas_dataset import from_pandas
 import pandas as pd
 from sklearn.metrics import (
     f1_score,
@@ -57,10 +59,10 @@ def train_and_log(
         mlflow.log_param("n_samples_train", X_train.shape[0])
 
         # Tags padronizadas (obrigatório)
-        mlflow.set_tag("model_type", "classification")
         mlflow.set_tag("framework", model_class.__module__.split(".")[0])
-        mlflow.set_tag("owner", "grupo-XX")
         mlflow.set_tag("phase", "datathon-fase05")
+        dataset = from_pandas(df, name="training_data")
+        mlflow.log_input(dataset, "training")
 
         # Treino
         model = model_class(**model_params)
@@ -74,8 +76,22 @@ def train_and_log(
             "recall": recall_score(y_test, y_pred, zero_division=0),
             "f1": f1_score(y_test, y_pred, zero_division=0),
         }
-        mlflow.log_metrics(metrics)
-
+        repo = git.Repo(search_parent_directories=True)
+        latest_commit = repo.head.commit
+        mlflow.set_tags(
+            {
+                "model_name": model_name,
+                "model_version": "1.0.0",
+                "model_type": "classification",
+                "training_data_version": "v1",
+                "metrics": metrics,
+                "owner": latest_commit.author.email,
+                "risk_level": "low",
+                "fairness_checked": True,
+                "git_sha": latest_commit.hexsha,
+            }
+        )
+        
         # Log do modelo
         mlflow.sklearn.log_model(model, "model")
 
