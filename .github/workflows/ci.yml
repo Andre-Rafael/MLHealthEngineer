@@ -22,8 +22,11 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
 
+      - name: Install poetry
+        run: pip install poetry
+
       - name: Install dependencies
-        run: poetry install --no-root
+        run: poetry install --no-interaction --no-root
 
       - name: Lint (ruff)
         run: ruff check src/ tests/ evaluation/
@@ -36,7 +39,7 @@ jobs:
 
       - name: Unit tests (pytest)
         run: |
-          python -m pytest tests/ -x \
+          pythopytest tests/ -x \
             --cov=src \
             --cov-report=xml \
             --cov-fail-under=60 \
