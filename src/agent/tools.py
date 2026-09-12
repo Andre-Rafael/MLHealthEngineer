@@ -19,7 +19,7 @@ def load_pdf_data(pdf_path: Path) -> str:
 def search_news_in_g1(query: str) -> str:
     info("Searching for news on G1 with query: %s", query)
     url = f"https://g1.globo.com/busca/?q={"+".join(query.split())}"
-    response = get(url)
+    response = get(url, timeout=30)
 
     soup = BeautifulSoup(response.text, "html.parser")
     return soup.get_text()
@@ -27,7 +27,7 @@ def search_news_in_g1(query: str) -> str:
 def search_info_in_gov_br(query: str) -> str:
     info("Searching for information on gov.br with query: %s", query)
     url = f"https://www.gov.br/saude/pt-br/search?origem=form&SearchableText={"+".join(query.split())}"
-    response = get(url)
+    response = get(url, timeout=30)
 
     soup = BeautifulSoup(response.text, "html.parser")
     return soup.get_text()
