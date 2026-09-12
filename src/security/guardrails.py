@@ -80,7 +80,7 @@ class OutputGuardrail:
             logger.warning("PII detectado no output: %d entidades", len(results))
             anonymized = self.anonymizer.anonymize(
                 text=llm_output,
-                analyzer_results=results,
+                analyzer_results=results,  # type: ignore[arg-type]
             )
             return anonymized.text
 
