@@ -1,6 +1,9 @@
 # .github/workflows/ci.yml
 name: Datathon CI
 
+env:
+  DISABLE_PANDERA_IMPORT_WARNING: true
+
 on:
   push:
     paths: ['src/**', 'tests/**', 'evaluation/**']

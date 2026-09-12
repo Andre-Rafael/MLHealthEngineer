@@ -1,5 +1,5 @@
 """Testes de feature engineering — schema contracts."""
-import pandera as pa
+import pandera.pandas as pa
 from pandera import Column, DataFrameSchema
 
 from src.features.feature_engineering import separe_columns, convert_categorical_to_numeric
