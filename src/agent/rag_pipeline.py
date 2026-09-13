@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List
 
 from dotenv import load_dotenv
+from langchain.chat_models import BaseChatModel
 from langchain_chroma import Chroma
 from pypdf import PdfReader
 from langchain_core.documents import Document
@@ -71,7 +72,7 @@ def get_prompt_template():
     return ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
 
 
-def generate_response_from_model(generative_model: Embeddings, context_text: str, query: str) -> BaseMessage:
+def generate_response_from_model(generative_model: BaseChatModel, context_text: str, query: str) -> BaseMessage:
     prompt_template = get_prompt_template()
     prompt = prompt_template.format(context=context_text, question=query)
 

@@ -1,6 +1,7 @@
 from logging import info
 
 from dotenv import load_dotenv
+from langchain.chat_models import BaseChatModel
 from langchain.embeddings import Embeddings
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
@@ -14,7 +15,7 @@ class LlmManager:
         self._embedding_model = "models/gemini-embedding-001" if llm_type == "google" else "nomic-embed-text"
         self.llm = self._initialize_llm()
 
-    def _initialize_llm(self):
+    def _initialize_llm(self) -> BaseChatModel:
         if self.llm_type == "google":
             return ChatGoogleGenerativeAI(model=self._model_name)
         elif self.llm_type == "ollama":
