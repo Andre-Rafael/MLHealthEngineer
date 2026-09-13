@@ -17,8 +17,8 @@ QUERY = "Como manter a saúde mental?"
 
 @fixture(scope="session")
 def llm_manager():
-    # return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
-    return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")
+    return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
+    # return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")
 
 @fixture(scope="session")
 def documents():
