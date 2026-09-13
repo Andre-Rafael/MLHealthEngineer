@@ -3,6 +3,7 @@ name: Datathon CI
 
 env:
   DISABLE_PANDERA_IMPORT_WARNING: true
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
 on:
   push:
