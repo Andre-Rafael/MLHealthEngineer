@@ -4,21 +4,18 @@ from pathlib import Path
 from langchain_core.messages import BaseMessage
 from pytest import fixture
 
-from src.agent.llm_manager import LlmManager
 from src.agent.rag_pipeline import (
     generate_response_from_model, 
     load_pdf_data, 
     process_documents_for_embedding, 
     retrieve_similar_documents
 )
+from tests.conftest import llm_manager
 
 
 QUERY = "Como manter a saúde mental?"
 
-@fixture(scope="session")
-def llm_manager():
-    # return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
-    return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")
+
 
 @fixture(scope="session")
 def documents():

@@ -1,16 +1,12 @@
 from logging import warning
 from typing import List
-from dotenv import load_dotenv
 
 from langchain_classic.agents import AgentExecutor, create_react_agent
+from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import Tool
-from langchain_google_genai import ChatGoogleGenerativeAI
 
-from tools import load_pdf_data, search_info_in_gov_br, search_news_in_g1
-
-load_dotenv()
-MODEL_NAME = "gemini-2.5-flash"
+from src.agent.tools import load_pdf_data, search_info_in_gov_br, search_news_in_g1
 
 
 def generate_react_prompt() -> PromptTemplate:
@@ -44,7 +40,7 @@ def generate_tools() -> List[Tool]:
         Tool(
             name="search_news_in_g1",
             description="""
-                Procura por notícias recentes sobre saúde mental no site G1 para o agente.
+                Procura por notícias recentes sobre o tema no site G1 para o agente.
                 A consulta deve ser feita em português e use palavras-chave relevantes para obter os melhores resultados.
             """,
             func=search_news_in_g1,
@@ -52,7 +48,7 @@ def generate_tools() -> List[Tool]:
         Tool(
             name="search_info_in_gov_br",
             description="""
-                Procura por informações sobre saúde mental no site do governo brasileiro para o agente.
+                Procura por informações sobre o tema no site do governo brasileiro para o agente.
                 A consulta deve ser feita em português e use palavras-chave relevantes para obter os melhores resultados.
             """,
             func=search_info_in_gov_br,
@@ -62,15 +58,13 @@ def generate_tools() -> List[Tool]:
 
 def create_datathon_agent(
     tools: list[Tool],
-    model_name: str = "gpt-4o-mini",
-    temperature: float = 0.0,
+    llm: BaseChatModel
 ) -> AgentExecutor:
     """Cria agente ReAct para o Datathon.
 
     Args:
         tools: Lista de ferramentas (≥ 3 obrigatório).
-        model_name: Modelo LLM a utilizar.
-        temperature: Temperatura de geração.
+        llm: Modelo LLM a utilizar.
 
     Returns:
         AgentExecutor configurado.
@@ -79,7 +73,6 @@ def create_datathon_agent(
     if len(tools) < 3:
         warning("Datathon exige ≥ 3 tools. Fornecidas: %d", len(tools))
 
-    llm = ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
     agent = create_react_agent(llm=llm, tools=tools, prompt=react_prompt)
 
     return AgentExecutor(
@@ -89,12 +82,3 @@ def create_datathon_agent(
         max_iterations=10,
         handle_parsing_errors=True,
     )
-
-
-if __name__ == "__main__":
-    tools = generate_tools()
-    agent_executor = create_datathon_agent(tools, model_name=MODEL_NAME, temperature=0.0)
-    response = agent_executor.invoke(
-        {"input": "Resume a nova legislação sobre saude mental no ambiente de trabalho no Brasil."}
-    )
-    print(response)
