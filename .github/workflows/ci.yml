@@ -41,6 +41,9 @@ jobs:
       - name: Security scan (bandit)
         run: poetry run bandit -r src/ -c pyproject.toml
 
+      - name: Build llm to test
+        run: cd src/serving && docker-compose up -d
+
       - name: Unit tests (pytest)
         run: |
           poetry run python -m pytest tests/ -x \

@@ -17,8 +17,8 @@ QUERY = "Como manter a saúde mental?"
 
 @fixture(scope="session")
 def llm_manager():
-    return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
-    # return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")
+    # return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
+    return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")
 
 @fixture(scope="session")
 def documents():
@@ -30,3 +30,4 @@ def test_rag_pipeline(llm_manager, documents):
     context_text = retrieve_similar_documents(QUERY, vector_store)
     response = generate_response_from_model(llm_manager.llm, context_text, QUERY)
     assert isinstance(response, BaseMessage)
+    Path('chroma_db').rmdir()  # Clean up the vector store directory after the test
