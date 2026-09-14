@@ -31,11 +31,3 @@ class LlmManager:
             return OllamaEmbeddings(model=self._embedding_model)
         else:
             raise ValueError(f"Unsupported LLM type: {self.llm_type}")
-
-    def generate_response(self, prompt: str) -> str:
-        if self.llm_type == "google":
-            return self.llm.generate(prompt)
-        elif self.llm_type == "ollama":
-            return self.llm.embed(prompt)
-        else:
-            raise ValueError(f"Unsupported LLM type: {self.llm_type}")

@@ -7,7 +7,6 @@ from langchain.chat_models import BaseChatModel
 from langchain_chroma import Chroma
 from pypdf import PdfReader
 from langchain_core.documents import Document
-from langchain_core.embeddings import Embeddings
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_text_splitters import RecursiveCharacterTextSplitter
