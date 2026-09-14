@@ -3,6 +3,7 @@ name: Datathon CI
 
 env:
   DISABLE_PANDERA_IMPORT_WARNING: true
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
 on:
   push:
@@ -39,6 +40,9 @@ jobs:
 
       - name: Security scan (bandit)
         run: poetry run bandit -r src/ -c pyproject.toml
+
+      - name: Build llm to test
+        run: cd src/serving && docker compose up -d
 
       - name: Unit tests (pytest)
         run: |
