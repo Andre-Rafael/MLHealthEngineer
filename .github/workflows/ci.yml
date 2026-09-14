@@ -42,7 +42,7 @@ jobs:
         run: poetry run bandit -r src/ -c pyproject.toml
 
       - name: Build llm to test
-        run: cd src/serving && docker-compose up -d
+        run: cd src/serving && docker compose up -d
 
       - name: Unit tests (pytest)
         run: |
