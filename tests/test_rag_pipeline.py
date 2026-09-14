@@ -30,4 +30,3 @@ def test_rag_pipeline(llm_manager, documents):
     context_text = retrieve_similar_documents(QUERY, vector_store)
     response = generate_response_from_model(llm_manager.llm, context_text, QUERY)
     assert isinstance(response, BaseMessage)
-    Path('chroma_db').rmdir()  # Clean up the vector store directory after the test
