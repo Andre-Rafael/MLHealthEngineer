@@ -1,4 +1,3 @@
-from conftest import llm_manager
 from src.agent.react_agent import create_datathon_agent, generate_tools
 
 def test_create_datathon_agent(llm_manager):

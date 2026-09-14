@@ -19,6 +19,6 @@ def sample_data() -> pd.DataFrame:
     })
 
 @pytest.fixture(scope="session")
-def llm_manager():
+def llm_manager() -> LlmManager:
     # return LlmManager(llm_type="google", model_name="gemini-2.5-flash")
     return LlmManager(llm_type="ollama", model_name="qwen3:0.6b")

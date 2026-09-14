@@ -10,7 +10,6 @@ from src.agent.rag_pipeline import (
     process_documents_for_embedding, 
     retrieve_similar_documents
 )
-from tests.conftest import llm_manager
 
 
 QUERY = "Como manter a saúde mental?"
